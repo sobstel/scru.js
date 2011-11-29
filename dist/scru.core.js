@@ -7,15 +7,13 @@ $scru = (function(){
 
   function depsCompleted(id) {
     var deps_completed = true
-    if (deps[id] && deps[id].length) {
-      for (var i in deps[id]) {
-        var dep = deps[id][i]
-        if (!completed[dep]) {
-          deps_completed = false
-          delayed[dep] = delayed[dep] || []
-          delayed[dep].push(id)
-          $public.invoke(dep)
-        }
+    for (var i in deps[id]) {
+      var dep = deps[id][i]
+      if (!completed[dep]) {
+        deps_completed = false
+        delayed[dep] = delayed[dep] || []
+        delayed[dep][id] = true
+        $public.invoke(dep)
       }
     }
     return deps_completed
@@ -40,16 +38,16 @@ $scru = (function(){
     $public.invoke(id)
   }
 
-  $public.completed = function(id){
+  $public.completed = function(id) {
     if (!completed[id]) {
       completed[id] = true
-      if (delayed[id] && delayed[id].length) {
-        for (var i in delayed[id]) {
-          $public.invoke(delayed[id][i])
-        }
+      for (var delayed_id in delayed[id]) {
+        $public.invoke(delayed_id)
       }
     }
   }
+
+  $public.fn = {}
 
   return $public;
 })();
