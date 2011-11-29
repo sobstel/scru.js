@@ -1,0 +1,19 @@
+scru.js
+=======
+
+Inspired by https://github.com/ded/script.js
+
+What for:
+
+- to make it even smaller
+- to have in-built lazy loading
+- to support google.load easily
+- you can execute any code (not only loaders)
+
+Usage
+- $scru.queue('t1', async_file_loader('test1.js'));
+- $scru.queue('t2', async_file_loader('test2.js'), ['t1']);
+- $scru.queue('jsapi', async_file_loader('http://www.google.com/jsapi'));
+- $scru.invoke('t1')
+- $scru.execute(async_file_loader('test3.js'), ['t2', 't1']);
+- $scru.execute(google_loader('maps', '2'), ['jsapi']);
