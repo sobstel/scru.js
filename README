@@ -1,25 +1,55 @@
 scru.js
 =======
 
+Lightweight execution dependency manager.
+
 What for
 --------
 
-- to make it even smaller (262 bytes gzipped!)
-- to have in-built lazy loading
-- to support google.load easily
-- you can execute any code (not only loaders)
+- as tiny as possible (less than 0.5KB gzipped!)
+- lazy (on-demand) loading
+- support for google.load out of the box
+- any code (not only loaders) can be executed 
+
+Files
+-----
+
+- scru.core.js - core file
+- scru.js - core file + predefined callbacks (async_load and google_load)
+
+API
+---
+
+- $scru.queue(id, fn, deps) - queue callback for later execution
+- $scru.invoke(id) - invoke queued callback (delayed until all deps completed)
+- $scru.execute(fn, deps) - execute fn (delayed until all deps completed)
+- $scru.completed(id) - called from fn to indicate fn execution is completed
 
 Usage
 -----
 
-- $scru.queue('t1', async_file_loader('test1.js'));
-- $scru.queue('t2', async_file_loader('test2.js'), ['t1']);
-- $scru.queue('jsapi', async_file_loader('http://www.google.com/jsapi'));
-- $scru.invoke('t1')
-- $scru.execute(async_file_loader('test3.js'), ['t2', 't1']);
-- $scru.execute(google_loader('maps', '2'), ['jsapi']);
+Queue callback for later execution:
 
-Credits
--------
+    $scru.queue('t1', $scru.fn.async_load('test1.js'));
+    $scru.queue('t2', $scru.fn.async_load('test2.js'), ['t1']);
+    $scru.queue('jsapi', $scru.fn.async_load('http://www.google.com/jsapi'));
 
-Inspired by https://github.com/ded/script.js.
+Explictly invoke queued callback:
+
+    $scru.invoke('t1');
+
+Execute function (when all deps are completed):
+
+    $scru.execute($scru.fn.async_load('test3.js'), ['t2', 't1']);
+    $scru.execute($scru.fn.google_load('maps', '2'), ['jsapi']);
+
+Custom callbacks
+----------------
+
+Custom callback must take 'id' as the only argument and inform $scru when it's
+completed ($scru.completed(id)). See async_load and google_load for examples.
+
+Name
+----
+
+scru name is formed from "SCRipt queUe". The way it sounds is intentional ;-)
