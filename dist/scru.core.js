@@ -1,9 +1,4 @@
-/*!
-  * scru.js Lightweight execution dependency manager
-  * https://github.com/sobstel/scru.js
-  * (c) Przemek Sobstel 2011
-  * License: MIT
-  */
+/* scru.js, (c) Przemek Sobstel 2011, License: MIT */
 
 $scru = (function(){
 	var $public = {}
