@@ -1,7 +1,6 @@
 /* scru.js, (c) Przemek Sobstel 2011, License: MIT */
 
 $scru = (function(){
-	var $public = {}
 	var queue = [], deps = [], completed = [], delayed = [], called = []
 	var func_i = 0;
 
@@ -20,6 +19,8 @@ $scru = (function(){
 		}
 		return deps_completed
 	}
+
+	var $public = {}
 
 	$public.queue = function(id, fn, fn_deps) {
 		queue[id] = queue[id] || []
