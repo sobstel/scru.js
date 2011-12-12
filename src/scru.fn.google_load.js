@@ -5,7 +5,7 @@ $scru.fn.google_load = function(moduleName, version, optionalSettings) {
   var org_callback = optionalSettings['callback'] || function(){}
   return function(id) {
     optionalSettings['callback'] = function() {
-      $scru.completed(id)
+      $scru.ready(id)
       org_callback()
     }
     google.load(moduleName, version, optionalSettings)

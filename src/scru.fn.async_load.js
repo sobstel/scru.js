@@ -7,7 +7,7 @@ $scru.fn.async_load = function(src) {
     script.type = 'text/javascript'
     script.async = true
     script.onload = function() {
-      $scru.completed(id)
+      $scru.ready(id)
     }
     document.getElementsByTagName('head')[0].appendChild(script)
   }

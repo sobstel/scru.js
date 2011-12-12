@@ -1,53 +1,54 @@
 /* scru.js, (c) Przemek Sobstel 2011, License: MIT */
 
-$scru = (function(){
-  var $public = {}
-  var queue = [], deps = [], completed = [], delayed = [], called = []
-  var func_i = 0;
+var $scru = (function(){
+  var that = {}
 
-  function depsCompleted(id) {
-    var deps_completed = true
-    for (var i in deps[id]) {
-      var dep = deps[id][i]
-      if (!completed[dep]) {
-        deps_completed = false
-        delayed[dep] = delayed[dep] || []
+  var queue = {}, deps = {}, delayed = {}, invoked = {}, ready = {}
+  var func_i = 0
+
+  function all_deps_ready(id) {
+    var all_deps_ready = true
+    for (var key in deps[id]) {
+      var dep = deps[id][key]
+      if (!ready[dep]) {
+        all_deps_ready = false
+        delayed[dep] = delayed[dep] || {}
         delayed[dep][id] = true
-        $public.invoke(dep)
+        that.invoke(dep)
       }
     }
-    return deps_completed
+    return all_deps_ready
   }
 
-  $public.queue = function(id, fn, fn_deps) {
-    queue[id] = queue[id] || []
+  that.queue = function(id, fn, fn_deps) {
+    queue[id] = queue[id] || {}
     queue[id] = fn
-    deps[id] = fn_deps
+    deps[id] = fn_deps || {}
   }
 
-  $public.invoke = function(id) {
-    if (!called[id] && !completed[id] && depsCompleted(id)) {
-      called[id] = true
+  that.invoke = function(id) {
+    if (!invoked[id] && !ready[id] && all_deps_ready(id)) {
+      invoked[id] = true
       queue[id](id)
     }
   }
 
-  $public.execute = function(fn, fn_deps) {
+  that.execute = function(fn, fn_deps) {
     var id = '_fn_' + (func_i++) + '_'
-    $public.queue(id, fn, fn_deps)
-    $public.invoke(id)
+    that.queue(id, fn, fn_deps)
+    that.invoke(id)
   }
 
-  $public.completed = function(id) {
-    if (!completed[id]) {
-      completed[id] = true
-      for (var delayed_id in delayed[id]) {
-        $public.invoke(delayed_id)
+  that.ready = function(id) {
+    if (!ready[id]) {
+      ready[id] = true
+      for (var key in delayed[id]) {
+        that.invoke(key)
       }
     }
   }
 
-  $public.fn = {}
+  that.fn = {}
 
-  return $public;
-})();
+  return that
+})()
