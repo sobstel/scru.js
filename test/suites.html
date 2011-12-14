@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>scru.js test suite</title>
+  <script src="../src/scru.core.js"></script>
+  <style>
+    h1 {
+      font-size: 1.4em;
+    }
+    .suite {
+      margin-bottom: 0.5em;
+      padding: 0.5em;
+      border-width: 2px;
+      border-style: solid;
+    }
+    .suite h2 {
+      margin: 0;
+      font-size: 1.1em;
+    }
+    .suite.ok {
+      color: green;
+      border-color: green;
+    }
+    .suite.fail {
+      color: red;
+      border-color: red;
+    }
+  </style>
+</head>
+<body>
+<h1>Test suites</h1>
+<div id="content"></div>
+
+<script>
+function test_suite(name) {
+  var seq = 0
+  var errors = []
+  var $content = document.getElementById('content');
+
+  var that = {}
+
+  function add_error(id, should, is) {
+    errors.push({ id: id, should: should, is: is })
+  }
+  function has_errors() {
+    return (errors.length > 0);
+  }
+
+  that.assertSeq = function(id, expected_seq) {
+    seq += 1
+    if (expected_seq !== seq) {
+      add_error(id, expected_seq, seq)
+    }
+  }
+
+  that.end = function() {
+    var suite_content = ''
+    var status = (has_errors() ? 'fail' : 'ok')
+
+    function ord_num(num) {
+      if (num == 1) {
+        return '1st'
+      } else if (num == 2) {
+        return '2nd'
+      } else if (num == 3) {
+        return '3rd'
+      } else {
+        return num + 'th'
+      }
+    }
+
+    suite_content += '<div class="suite ' + status + '">'
+    suite_content += '<h2>' + name + ': ' + status + '</h2>'
+    if (has_errors()) {
+      suite_content += '<ul>'
+      for (var i in errors) {
+        var error = errors[i]
+        suite_content += '<li>'
+        suite_content += '<strong>' + error.id + '</strong>: '
+        suite_content += 'should be <strong>' + ord_num(error.should) + '</strong> '
+        suite_content += 'and is <strong>' + ord_num(error.is) + '</strong>'
+        suite_content += '</li>'
+      }
+      suite_content += '</ul>'
+    }
+
+    $content.innerHTML = $content.innerHTML + suite_content;
+  }
+
+  return that;
+}
+
+var suite1 = test_suite('suite1 (sequence)')
+$scru.queue('1:f1', function(id){ suite1.assertSeq(id, 1); $scru.ready(id) })
+$scru.queue('1:f2', function(id){ suite1.assertSeq(id, 2); $scru.ready(id) }, ['1:f1'])
+$scru.invoke('1:f2')
+suite1.end()
+
+var suite2 = test_suite('suite2 (sequence)')
+$scru.queue('2:f1', function(id){ suite2.assertSeq(id, 1); $scru.ready(id) })
+$scru.queue('2:f2', function(id){ suite2.assertSeq(id, 2); $scru.ready(id) })
+$scru.queue('2:f3', function(id){ suite2.assertSeq(id, 3); $scru.ready(id) }, ['2:f2'])
+$scru.queue('2:f4', function(id){ suite2.assertSeq(id, 4); $scru.ready(id) }, ['2:f1', '2:f3'])
+$scru.invoke('2:f4')
+suite2.end()
+
+var suite3 = test_suite('suite3 (sequence)')
+$scru.queue('3:f1', function(id){ suite3.assertSeq(id, 1); $scru.ready(id) })
+$scru.queue('3:f2', function(id){ suite3.assertSeq(id, 2); $scru.ready(id) })
+$scru.queue('3:f3', function(id){ suite3.assertSeq(id, 3); $scru.ready(id) })
+$scru.queue('3:f4', function(id){ suite3.assertSeq(id, 4); $scru.ready(id) }, ['3:f1', '3:f2', '3:f3'])
+$scru.queue('3:f5', function(id){ suite3.assertSeq(id, 5); $scru.ready(id) }, ['3:f4'])
+$scru.invoke('3:f5')
+suite3.end()
+
+var suite4 = test_suite('suite4 (executed only once)')
+$scru.queue('4:f1', function(id){ suite4.assertSeq(id, 1); $scru.ready(id) })
+$scru.invoke('4:f1')
+$scru.invoke('4:f1')
+$scru.invoke('4:f1')
+suite4.end()
+
+var suite5 = test_suite('suite5 (dependent execution)')
+$scru.queue('5:f1', function(id){ suite5.assertSeq(id, 1); $scru.ready(id) })
+$scru.execute(function(id){ suite5.assertSeq(id, 2); $scru.ready(id) }, ['5:f1'])
+suite5.end()
+</script>
+
+</body>
+</html>
