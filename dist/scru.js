@@ -8,8 +8,8 @@ var $scru = (function(){
 
   function all_deps_ready(id) {
     var all_deps_ready = true
-    for (var key in deps[id]) {
-      var dep = deps[id][key]
+    for (var i in deps[id]) {
+      var dep = deps[id][i]
       if (!ready[dep]) {
         all_deps_ready = false
         delayed[dep] = delayed[dep] || {}
@@ -21,9 +21,8 @@ var $scru = (function(){
   }
 
   that.queue = function(id, fn, fn_deps) {
-    queue[id] = queue[id] || {}
     queue[id] = fn
-    deps[id] = fn_deps || {}
+    deps[id] = fn_deps || []
   }
 
   that.invoke = function(id) {
@@ -52,7 +51,6 @@ var $scru = (function(){
 
   return that
 })()
-
 $scru.fn.async_load = function(src) {
   return function(id) {
     var script = document.createElement('script')
