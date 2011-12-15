@@ -3,10 +3,10 @@ scru.js
 
 Lightweight execution dependency manager.
 
-What for
---------
+Core features
+-------------
 
-- as tiny as possible (less than 0.5KB gzipped!)
+- lightweight (less than 0.5KB gzipped)
 - lazy (on-demand) loading
 - support for google.load out of the box
 - any code (not only loaders) can be executed 
@@ -34,14 +34,18 @@ Queue callback for later execution:
     $scru.queue('t2', $scru.fn.async_load('test2.js'), ['t1']);
     $scru.queue('jsapi', $scru.fn.async_load('http://www.google.com/jsapi'));
 
-Explictly invoke queued callback:
+Explictly invoke queued callback (first ensures all deps are ready):
 
     $scru.invoke('t1');
 
-Execute function (when all deps are ready):
+Execute function (first ensures all deps are ready):
 
     $scru.execute($scru.fn.async_load('test3.js'), ['t2', 't1']);
     $scru.execute($scru.fn.google_load('maps', '2'), ['jsapi']);
+    $scru.execute(function(id){
+      do_something();
+      $scru.ready(id);
+    }, ['t1']);
 
 Custom callbacks
 ----------------
