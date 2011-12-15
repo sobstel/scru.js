@@ -30,22 +30,28 @@ Usage
 
 Queue callback for later execution:
 
-    $scru.queue('t1', $scru.fn.async_load('test1.js'));
-    $scru.queue('t2', $scru.fn.async_load('test2.js'), ['t1']);
-    $scru.queue('jsapi', $scru.fn.async_load('http://www.google.com/jsapi'));
+``` js
+$scru.queue('t1', $scru.fn.async_load('test1.js'));
+$scru.queue('t2', $scru.fn.async_load('test2.js'), ['t1']);
+$scru.queue('jsapi', $scru.fn.async_load('http://www.google.com/jsapi'));
+```
 
 Explictly invoke queued callback (first ensures all deps are ready):
 
-    $scru.invoke('t1');
+``` js
+$scru.invoke('t1');
+```
 
 Execute function (first ensures all deps are ready):
 
+``` js
     $scru.execute($scru.fn.async_load('test3.js'), ['t2', 't1']);
     $scru.execute($scru.fn.google_load('maps', '2'), ['jsapi']);
     $scru.execute(function(id){
       do_something();
       $scru.ready(id);
     }, ['t1']);
+```
 
 Custom callbacks
 ----------------
