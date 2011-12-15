@@ -8,7 +8,7 @@ var $scru = (function(){
 
   function all_deps_ready(id) {
     var all_deps_ready = true
-    for (var i in deps[id]) {
+    for (var i = 0, len = deps[id].length; i < len; i += 1) {
       var dep = deps[id][i]
       if (!ready[dep]) {
         all_deps_ready = false
