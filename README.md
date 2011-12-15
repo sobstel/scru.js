@@ -45,12 +45,12 @@ $scru.invoke('t1');
 Execute function (first ensures all deps are ready):
 
 ``` js
-    $scru.execute($scru.fn.async_load('test3.js'), ['t2', 't1']);
-    $scru.execute($scru.fn.google_load('maps', '2'), ['jsapi']);
-    $scru.execute(function(id){
-      do_something();
-      $scru.ready(id);
-    }, ['t1']);
+$scru.execute($scru.fn.async_load('test3.js'), ['t2', 't1']);
+$scru.execute($scru.fn.google_load('maps', '2'), ['jsapi']);
+$scru.execute(function(id){
+  do_something();
+  $scru.ready(id);
+}, ['t1']);
 ```
 
 Custom callbacks
