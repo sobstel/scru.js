@@ -4,7 +4,7 @@ $scru.fn.async_load = function(src) {
   return function(id) {
     var script = document.createElement('script'), loaded = false
     script.onload = script.onreadystatechange = function() {
-      if (!loaded && this.readyState && this.readyState != 'loaded' && this.readyState != 'complete') return
+      if ((this.readyState && this.readyState != 'loaded' && this.readyState != 'complete') || loaded) return;
       this.onload = this.onreadystatechange = null
       loaded = true
       $scru.ready(id)
