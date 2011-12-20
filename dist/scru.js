@@ -53,13 +53,16 @@ var $scru = (function(){
 })()
 $scru.fn.async_load = function(src) {
   return function(id) {
-    var script = document.createElement('script')
+    var script = document.createElement('script'), loaded = false
+    script.onload = script.onreadystatechange = function() {
+      if (!loaded && this.readyState && this.readyState != 'loaded' && this.readyState != 'complete') return
+      this.onload = this.onreadystatechange = null
+      loaded = true
+      $scru.ready(id)
+    }
     script.src = src
     script.type = 'text/javascript'
     script.async = true
-    script.onload = function() {
-      $scru.ready(id)
-    }
     document.getElementsByTagName('head')[0].appendChild(script)
   }
 }
